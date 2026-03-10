@@ -1,147 +1,586 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regiment ARCL Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        regiment: '#1a1c23',
-                        panel: '#252830',
-                        accent: '#4ade80'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background-color: #0f1015; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1c23; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ARCL PVP Hub — The Regiment</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap');
+:root{
+  --bg:#040f07;--panel:#0a2618;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.12);
+  --gold-hi:rgba(201,168,76,0.55);--cream:#f0e8d0;--mid:#a8c4ac;--dim:#5a7e65;
+  --border:rgba(201,168,76,0.18);--border-hi:rgba(201,168,76,0.5);
+  --red:#ef4444;--yellow:#f59e0b;--teal:#14b8a6;--blue:#3b82f6;
+  --green-light:rgba(10,38,24,0.88);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--cream);font-family:'Exo 2',sans-serif;min-height:100vh;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+.layout{display:grid;grid-template-columns:230px 1fr;height:100vh;position:relative;z-index:1;}
+
+/* ─── SIDEBAR ─── */
+.sidebar{background:linear-gradient(180deg,rgba(10,38,24,0.99),rgba(4,15,7,0.99));border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.brand{padding:18px 16px;border-bottom:1px solid var(--border);}
+.brand-eye{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:0.7;}
+.brand-name{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;text-transform:uppercase;line-height:1.1;margin-top:3px;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-top:4px;}
+
+.pvp-banner{margin:12px 12px 0;border-radius:10px;border:1px solid rgba(20,184,166,0.3);background:rgba(20,184,166,0.07);padding:10px 12px;}
+.pvp-eye{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5eead4;}
+.pvp-countdown{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:#5eead4;letter-spacing:2px;margin-top:2px;}
+.pvp-date{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(94,234,212,0.7);margin-top:1px;}
+
+.nav{flex:1;padding:10px 0;overflow-y:auto;}
+.nav-sec{padding:10px 16px 4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;font-size:13px;color:var(--mid);user-select:none;}
+.nav-item:hover{background:var(--gold-dim);color:var(--cream);}
+.nav-item.active{background:var(--gold-dim);border-left-color:var(--gold);color:var(--gold);}
+.nav-item .ico{width:16px;text-align:center;font-size:14px;flex-shrink:0;}
+
+.sidebar-foot{padding:14px 16px;border-top:1px solid var(--border);}
+.quick-links{display:flex;gap:6px;flex-wrap:wrap;}
+.ql{padding:5px 10px;border-radius:8px;border:1px solid var(--border-hi);background:var(--gold-dim);color:var(--gold);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all .15s;}
+.ql:hover{background:rgba(201,168,76,0.22);}
+.ql.p{background:var(--gold);color:var(--bg);}
+
+/* ─── MAIN ─── */
+.main{display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:linear-gradient(90deg,rgba(10,38,24,0.98),rgba(4,15,7,0.95));border-bottom:1px solid var(--border);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-shrink:0;}
+.tb-left{}
+.tb-title{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;text-transform:uppercase;}
+.tb-sub{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mid);text-transform:uppercase;margin-top:2px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.clock{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);border:1px solid var(--border);padding:5px 10px;border-radius:8px;}
+.user-chip{display:flex;align-items:center;gap:8px;}
+.avatar{width:32px;height:32px;border-radius:10px;background:var(--gold-dim);border:1px solid var(--border-hi);display:grid;place-items:center;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:800;color:var(--gold);}
+.user-name{font-size:12px;font-weight:600;}
+.user-role{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;}
+
+.content{flex:1;overflow-y:auto;padding:20px;}
+.page{display:none;} .page.active{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── CARDS ─── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat{border-radius:12px;border:1px solid var(--border);background:var(--green-light);padding:14px 16px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--gold),transparent);}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);}
+.stat-val{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:28px;color:var(--gold);line-height:1;margin:6px 0 4px;}
+.stat-sub{font-size:11px;color:var(--mid);}
+
+.card{border-radius:12px;border:1px solid var(--border);background:var(--green-light);margin-bottom:14px;overflow:hidden;}
+.card-h{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;text-transform:uppercase;}
+.card-sub{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-top:1px;}
+.card-body{padding:14px 16px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* ─── BADGES ─── */
+.pill{display:inline-flex;padding:3px 9px;border-radius:999px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;}
+.pill-green{background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.25);color:#5eead4;}
+.pill-yellow{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fcd34d;}
+.pill-blue{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);color:#93c5fd;}
+.pill-dim{background:rgba(90,126,101,0.1);border:1px solid rgba(90,126,101,0.25);color:var(--dim);}
+.pill-gold{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold);}
+
+/* ─── TABLE ─── */
+table{width:100%;border-collapse:collapse;}
+th{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(201,168,76,0.05);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(201,168,76,0.03);}
+
+/* ─── CALENDAR ─── */
+.cal-wrap{display:grid;grid-template-columns:1fr 300px;gap:14px;}
+.cal-box{border-radius:12px;border:1px solid var(--border);background:var(--green-light);overflow:hidden;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);}
+.cal-month{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.cal-controls{display:flex;gap:6px;}
+.cal-btn{padding:5px 10px;border-radius:8px;border:1px solid var(--border-hi);background:var(--gold-dim);color:var(--gold);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.cal-btn:hover{background:rgba(201,168,76,0.22);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.dow{padding:8px 4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-align:center;border-bottom:1px solid var(--border);background:rgba(201,168,76,0.03);}
+.day{min-height:80px;padding:7px;border-bottom:1px solid rgba(201,168,76,0.07);border-right:1px solid rgba(201,168,76,0.07);background:rgba(4,15,7,0.3);}
+.day:nth-child(7n){border-right:none;}
+.day .d-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--cream);}
+.day.dim .d-num{color:var(--dim);}
+.day.today{outline:2px solid rgba(201,168,76,0.5);outline-offset:-2px;}
+.day.has-pvp{background:rgba(20,184,166,0.06);}
+.day.has-training{background:rgba(245,158,11,0.04);}
+.day-tags{display:flex;flex-direction:column;gap:4px;margin-top:5px;}
+.dtag{font-size:9px;font-weight:700;font-family:'Share Tech Mono',monospace;letter-spacing:1px;padding:2px 5px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dtag.training{background:rgba(245,158,11,0.12);color:#fcd34d;border:1px solid rgba(245,158,11,0.2);}
+.dtag.pvp{background:rgba(20,184,166,0.12);color:#5eead4;border:1px solid rgba(20,184,166,0.25);}
+.dtag.kickoff{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25);}
+
+/* ─── SIDE PANEL ─── */
+.side-panel{border-radius:12px;border:1px solid var(--border);background:var(--green-light);padding:14px;display:flex;flex-direction:column;gap:12px;align-self:start;}
+.sp-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.event-item{border-radius:10px;border:1px solid var(--border);background:rgba(4,15,7,0.4);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
+.ev-date{text-align:center;flex-shrink:0;width:36px;}
+.ev-day{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--gold);line-height:1;}
+.ev-mo{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+.ev-info .ev-name{font-size:12px;font-weight:600;color:var(--cream);}
+.ev-info .ev-meta{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--mid);margin-top:2px;}
+
+/* ─── VOD ─── */
+.video-wrap{aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.video-wrap iframe{width:100%;height:100%;border:0;}
+
+/* ─── ROSTER ─── */
+.rank-chip{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;background:var(--gold-dim);border:1px solid var(--border);color:var(--gold);}
+
+/* ─── PROGRESS ─── */
+.prog-wrap{background:rgba(201,168,76,0.06);border-radius:999px;height:4px;overflow:hidden;margin-top:8px;}
+.prog-fill{height:100%;border-radius:999px;background:linear-gradient(to right,var(--gold),#e2c06a);}
+
+/* ─── REVIEW CHECKLIST ─── */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(4,15,7,0.4);margin-bottom:8px;}
+.check-box{width:18px;height:18px;border-radius:5px;border:1px solid var(--border-hi);background:transparent;flex-shrink:0;cursor:pointer;display:grid;place-items:center;font-size:10px;transition:all .15s;margin-top:1px;}
+.check-box.done{background:rgba(20,184,166,0.15);border-color:rgba(20,184,166,0.4);color:#5eead4;}
+.check-label{font-size:13px;font-weight:600;}
+.check-meta{font-size:11px;color:var(--mid);margin-top:2px;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.18);border-radius:999px;}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .grid2,.cal-wrap{grid-template-columns:1fr;}
+}
+</style>
 </head>
-<body class="min-h-screen p-6">
+<body>
+<div class="layout">
 
-    <header class="mb-8 border-b border-gray-700 pb-4 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold tracking-wider text-white uppercase">Regiment Discord</h1>
-            <p class="text-accent text-sm font-semibold tracking-widest mt-1">ARCL Certified Members PVP Dashboard</p>
-        </div>
-        <div class="text-right">
-            <span class="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide animate-pulse">Live</span>
-        </div>
-    </header>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-eye">// ARCL Certified Hub</div>
+    <div class="brand-name">The<br>Regiment</div>
+    <div class="brand-tag">Lightweight League · PVP Division</div>
+  </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="pvp-banner">
+    <div class="pvp-eye">// Next PVP Event</div>
+    <div class="pvp-countdown" id="countdown">—</div>
+    <div class="pvp-date">March 28, 2026 · ARCL Certified</div>
+  </div>
 
-        <div class="lg:col-span-2 space-y-6">
-            
-            <div class="bg-panel rounded-xl shadow-lg border border-gray-700 overflow-hidden">
-                <div class="p-4 border-b border-gray-700 bg-gray-800">
-                    <h2 class="text-xl font-bold flex items-center gap-2">
-                        <span>⚔️</span> Latest Intel: The Regiment Vs Resurrect
-                    </h2>
-                </div>
-                <div class="aspect-video w-full bg-black">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/RfbSsP8AVLY?start=6116" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
+  <nav class="nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-item active" onclick="nav('overview',this)"><span class="ico">⚡</span>Overview</div>
+    <div class="nav-item" onclick="nav('calendar',this)"><span class="ico">🗓️</span>Calendar</div>
+    <div class="nav-sec">Match</div>
+    <div class="nav-item" onclick="nav('vod',this)"><span class="ico">🎥</span>Last Match VOD</div>
+    <div class="nav-sec">Roster</div>
+    <div class="nav-item" onclick="nav('roster',this)"><span class="ico">👥</span>LW League Roster</div>
+  </nav>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-panel rounded-xl shadow-lg p-6 border border-gray-700 border-t-4 border-t-red-500">
-                    <h3 class="text-lg text-gray-400 font-semibold mb-2 uppercase tracking-wide">Next Major Operation</h3>
-                    <p class="text-3xl font-bold text-white mb-2">March 28th</p>
-                    <p class="text-sm text-gray-400">ARCL Official PVP Match</p>
-                </div>
-
-                <div class="bg-panel rounded-xl shadow-lg p-6 border border-gray-700 border-t-4 border-t-accent">
-                    <h3 class="text-lg text-gray-400 font-semibold mb-2 uppercase tracking-wide">Training Cycle</h3>
-                    <p class="text-sm text-gray-300 mb-3">Started: <span class="text-white font-bold">March 9th</span></p>
-                    <div class="flex gap-2">
-                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Tuesdays</span>
-                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Thursdays</span>
-                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Fridays</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-panel rounded-xl shadow-lg border border-gray-700 flex flex-col h-[800px]">
-            <div class="p-4 border-b border-gray-700 bg-gray-800 flex justify-between items-center">
-                <h2 class="text-xl font-bold">📋 Active League Roster</h2>
-                <span class="bg-accent text-black text-xs font-bold px-2 py-1 rounded">12 Members</span>
-            </div>
-            
-            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar">
-                <ul class="space-y-3">
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-yellow-400 mr-2">[CO]</span> 
-                        <span class="font-bold">WSSIWARLORDI</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-yellow-400 mr-2">[PL] (1st SGT)</span> 
-                        <span class="font-bold">KillerKenny3773</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-blue-400 mr-2">[TL] (LCPL)</span> 
-                        <span class="font-bold">GetNMyBellyBaby</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-blue-400 mr-2">[TL] (CPL)</span> 
-                        <span class="font-bold">Jonj17</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">[SSGT]</span> 
-                        <span class="font-bold">Vhyns</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(Cpl)</span> 
-                        <span class="font-bold">OldSchoolG</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(CPL)</span> 
-                        <span class="font-bold">bloodywolf2177</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(LCPL)</span> 
-                        <span class="font-bold">Seurkamp27P</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(LCPL)</span> 
-                        <span class="font-bold">Xavier</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(PFC)</span> 
-                        <span class="font-bold">zab</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">(PFC)</span> 
-                        <span class="font-bold">SlartiBartFast</span>
-                    </li>
-                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
-                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
-                        <span class="font-mono text-sm text-gray-400 mr-2">Specialist</span> 
-                        <span class="font-bold">Red_Streaker7</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+  <div class="sidebar-foot">
+    <div class="quick-links">
+      <a href="https://gonzale20.github.io/the-regiment" target="_blank" class="ql p">Main Hub ↗</a>
+      <a href="https://gonzale20.github.io/the-regiment/leadership.html" target="_blank" class="ql">Leadership ↗</a>
     </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title" id="tb-title">ARCL PVP Overview</div>
+      <div class="tb-sub" id="tb-sub">// Lightweight League · March 2026</div>
+    </div>
+    <div class="tb-right">
+      <div class="clock" id="clock">—</div>
+      <div class="user-chip">
+        <div class="avatar">WW</div>
+        <div>
+          <div class="user-name">WSSIWarlordI</div>
+          <div class="user-role">CO · ARCL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Next PVP</div>
+          <div class="stat-val" id="days-to-pvp">—</div>
+          <div class="stat-sub">Days until March 28</div>
+          <div class="prog-wrap"><div class="prog-fill" id="pvp-prog" style="width:80%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active Roster</div>
+          <div class="stat-val">12</div>
+          <div class="stat-sub">LW League Members</div>
+          <div class="prog-wrap"><div class="prog-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Training Cadence</div>
+          <div class="stat-val">3×</div>
+          <div class="stat-sub">Tue · Thu · Fri per week</div>
+          <div class="prog-wrap"><div class="prog-fill" style="width:75%"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Season Start</div>
+          <div class="stat-val">Mar 9</div>
+          <div class="stat-sub">Kickoff training session</div>
+          <div class="prog-wrap"><div class="prog-fill" style="width:60%"></div></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-h">
+            <div><div class="card-title">Next Sessions</div><div class="card-sub">// Upcoming schedule</div></div>
+            <span class="pill pill-yellow">Tue / Thu / Fri</span>
+          </div>
+          <div class="card-body" style="padding:10px;">
+            <div id="upcoming-events"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><div class="card-title">Key Dates</div><div class="card-sub">// March 2026</div></div>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <table>
+              <thead><tr><th>Date</th><th>Event</th><th>Type</th></tr></thead>
+              <tbody>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 9</td><td><b>Training Kickoff</b></td><td><span class="pill pill-gold">Kickoff</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 11</td><td>Training Session</td><td><span class="pill pill-yellow">Training</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 13</td><td>Training Session</td><td><span class="pill pill-yellow">Training</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 18</td><td>Training Session</td><td><span class="pill pill-yellow">Training</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 20</td><td>Training Session</td><td><span class="pill pill-yellow">Training</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;">Mar 25</td><td>Training Session</td><td><span class="pill pill-yellow">Training</span></td></tr>
+                <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#5eead4;font-weight:700;">Mar 28</td><td style="color:#5eead4;font-weight:700;">ARCL PVP — Certified</td><td><span class="pill pill-green">PVP</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div><div class="card-title">Roster Readiness</div><div class="card-sub">// 12 certified members</div></div>
+          <span class="pill pill-green">All Active</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead><tr><th>Member</th><th>Rank</th><th>Status</th></tr></thead>
+            <tbody id="overview-roster"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="page" id="page-calendar">
+      <div class="cal-wrap">
+        <div class="cal-box">
+          <div class="cal-head">
+            <span class="cal-month" id="cal-title">March 2026</span>
+            <div class="cal-controls">
+              <button class="cal-btn" onclick="shiftMonth(-1)">◀</button>
+              <button class="cal-btn" onclick="goToday()">Today</button>
+              <button class="cal-btn" onclick="shiftMonth(1)">▶</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div class="side-panel">
+          <div>
+            <div class="sp-title">Training Cadence</div>
+            <p style="font-size:12px;color:var(--mid);line-height:1.6;">Starts <b style="color:var(--cream);">March 9</b> (Kickoff). Recurring every <b style="color:var(--cream);">Tuesday, Thursday & Friday</b> through the season. Times posted in Discord.</p>
+          </div>
+          <div>
+            <div class="sp-title">Upcoming</div>
+            <div id="side-upcoming"></div>
+          </div>
+          <div>
+            <div style="display:flex;gap:8px;flex-direction:column;">
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(201,168,76,0.3);flex-shrink:0;"></div><span style="font-size:11px;color:var(--mid);">Kickoff Session</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(245,158,11,0.3);flex-shrink:0;"></div><span style="font-size:11px;color:var(--mid);">Training Day</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(20,184,166,0.3);flex-shrink:0;"></div><span style="font-size:11px;color:var(--mid);">PVP Event</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOD -->
+    <div class="page" id="page-vod">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-h">
+            <div><div class="card-title">vs. Resurrect</div><div class="card-sub">// Last match replay</div></div>
+            <span class="pill pill-blue">VOD</span>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+              <a href="https://www.youtube.com/watch?v=RfbSsP8AVLY&t=6116s" target="_blank" style="padding:7px 14px;border-radius:8px;background:var(--gold);color:var(--bg);font-family:'Rajdhani',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;">Open on YouTube ↗</a>
+            </div>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/RfbSsP8AVLY?start=6116" title="vs Resurrect Match VOD" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <p style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dim);margin-top:8px;">// Video starts at match timestamp · if embed is blocked, use YouTube link above</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div><div class="card-title">Post-Game Review</div><div class="card-sub">// Debrief checklist</div></div>
+          </div>
+          <div class="card-body">
+            <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''"></div><div><div class="check-label">Comms Discipline</div><div class="check-meta">Callouts, brevity, no cross-talk during contact</div></div></div>
+            <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''"></div><div><div class="check-label">Role Execution</div><div class="check-meta">Were primary & backup roles executed correctly?</div></div></div>
+            <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''"></div><div><div class="check-label">Rotations & Timing</div><div class="check-meta">Were rotations late/early? Any gaps identified?</div></div></div>
+            <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''"></div><div><div class="check-label">Positioning</div><div class="check-meta">Map control and angle discipline review</div></div></div>
+            <div class="check-item"><div class="check-box" onclick="this.classList.toggle('done');this.textContent=this.classList.contains('done')?'✓':''"></div><div><div class="check-label">Action Items for Next Training</div><div class="check-meta">What do we drill before March 28?</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROSTER -->
+    <div class="page" id="page-roster">
+      <div class="stats" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat"><div class="stat-label">Total Members</div><div class="stat-val">12</div><div class="stat-sub">LW League Certified</div></div>
+        <div class="stat"><div class="stat-label">Active</div><div class="stat-val">12</div><div class="stat-sub">In training sessions</div></div>
+        <div class="stat"><div class="stat-label">PVP Date</div><div class="stat-val">Mar 28</div><div class="stat-sub">Full roster expected</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div><div class="card-title">ARCL Lightweight League — Active Roster</div><div class="card-sub">// 12 certified members</div></div>
+          <button onclick="copyRoster()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border-hi);background:var(--gold-dim);color:var(--gold);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Copy Roster</button>
+        </div>
+        <div style="padding:0;">
+          <table>
+            <thead><tr><th>#</th><th>Member</th><th>Rank Tag</th><th>Role</th><th>Status</th></tr></thead>
+            <tbody id="full-roster"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+const ROSTER = [
+  {member:"@[CO]WSSIWARLORDI",      tag:"CO",      role:"Commanding Officer"},
+  {member:"@[TL](LCPL) GetNMyBellyBaby", tag:"LCPL",  role:"Team Leader"},
+  {member:"@(Cpl) OldSchoolG",      tag:"CPL",     role:"Rifleman"},
+  {member:"@[SSGT] Vhyns",          tag:"SSGT",    role:"Squad Leader"},
+  {member:"@(PFC) zab",             tag:"PFC",     role:"Rifleman"},
+  {member:"@(CPL) bloodywolf2177",  tag:"CPL",     role:"Rifleman"},
+  {member:"@Red_Streaker7",         tag:"—",       role:"Member"},
+  {member:"@(PFC) SlartiBartFast",  tag:"PFC",     role:"Rifleman"},
+  {member:"@[PL](1st SGT) KillerKenny3773", tag:"1st SGT", role:"Platoon Leader"},
+  {member:"@(LCPL)Seurkamp27P",     tag:"LCPL",    role:"Rifleman"},
+  {member:"@(LCPL) Xavier",         tag:"LCPL",    role:"Rifleman"},
+  {member:"@[TL](CPL) Jonj17",      tag:"CPL",     role:"Team Leader"},
+];
+
+const PVP_DATE  = new Date("2026-03-28T00:00:00");
+const KICKOFF   = new Date("2026-03-09T00:00:00");
+const TRAIN_DAYS = [2,4,5]; // Tue, Thu, Fri
+
+// ─── CLOCK & COUNTDOWN ───
+function tick(){
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleString("en-US",{month:"2-digit",day:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false});
+  const days = Math.ceil((PVP_DATE - startOfDay(now)) / 864e5);
+  const txt = days > 0 ? days+"d to PVP" : days === 0 ? "PVP TODAY" : "PVP Complete";
+  document.getElementById("countdown").textContent = txt;
+  document.getElementById("days-to-pvp").textContent = days > 0 ? days : "—";
+  const pct = Math.max(0, Math.min(100, 100 - (days/30)*100));
+  document.getElementById("pvp-prog").style.width = pct+"%";
+}
+tick(); setInterval(tick, 60000);
+
+function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+
+// ─── NAVIGATION ───
+const PAGES = {
+  overview: ["ARCL PVP Overview","// Lightweight League · March 2026"],
+  calendar:  ["Training Calendar","// Sessions start Mar 9 · Tue/Thu/Fri cadence"],
+  vod:       ["Last Match VOD","// vs. Resurrect · Review Checklist"],
+  roster:    ["LW League Roster","// 12 Certified Members · Active"],
+};
+function nav(id, el){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.getElementById("page-"+id).classList.add("active");
+  if(el) el.classList.add("active");
+  const t = PAGES[id]||PAGES.overview;
+  document.getElementById("tb-title").textContent = t[0];
+  document.getElementById("tb-sub").textContent = t[1];
+  if(id==="calendar") renderCalendar();
+  if(id==="roster") renderRoster();
+}
+
+// ─── TRAINING DATES ───
+function getTrainingDates(year, month){
+  const out = [];
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(year, month, d);
+    const iso = toISO(date);
+    if(iso === toISO(KICKOFF)){
+      out.push({date, type:"kickoff", label:"Kickoff"});
+    } else if(date >= KICKOFF && TRAIN_DAYS.includes(date.getDay())){
+      out.push({date, type:"training", label:"Training"});
+    }
+    if(iso === toISO(PVP_DATE)) out.push({date, type:"pvp", label:"PVP"});
+  }
+  return out;
+}
+
+function toISO(d){ return d.toISOString().slice(0,10); }
+function fmtDate(d){ return d.toLocaleDateString("en-US",{month:"short",day:"numeric"}); }
+function dayName(d){ return d.toLocaleDateString("en-US",{weekday:"long"}); }
+
+// ─── UPCOMING EVENTS ───
+function getUpcoming(count=6){
+  const today = startOfDay(new Date());
+  const out = [];
+  // scan next 60 days
+  for(let i=0; i<60 && out.length<count; i++){
+    const d = new Date(today); d.setDate(d.getDate()+i);
+    const iso = toISO(d);
+    if(iso === toISO(KICKOFF)) out.push({date:d,type:"kickoff",label:"Training Kickoff"});
+    else if(d >= KICKOFF && TRAIN_DAYS.includes(d.getDay())) out.push({date:d,type:"training",label:"Training Session"});
+    if(iso === toISO(PVP_DATE)) out.push({date:d,type:"pvp",label:"ARCL PVP — Certified"});
+  }
+  return out;
+}
+
+// Render upcoming events list (sidebar + overview card)
+function renderUpcoming(containerId, count){
+  const list = getUpcoming(count);
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = list.map(ev=>`
+    <div class="event-item" style="margin-bottom:8px;">
+      <div class="ev-date">
+        <div class="ev-day">${ev.date.getDate()}</div>
+        <div class="ev-mo">${ev.date.toLocaleDateString("en-US",{month:"short"})}</div>
+      </div>
+      <div class="ev-info">
+        <div class="ev-name">${ev.label}</div>
+        <div class="ev-meta">${dayName(ev.date)} ${ev.type==="pvp"?"· Full Roster Required":ev.type==="kickoff"?"· Season Opener":"· Tue/Thu/Fri"}</div>
+      </div>
+      <span class="pill ${ev.type==="pvp"?"pill-green":ev.type==="kickoff"?"pill-gold":"pill-yellow"}" style="margin-left:auto;align-self:center;">${ev.type==="pvp"?"PVP":ev.type==="kickoff"?"Kickoff":"Training"}</span>
+    </div>
+  `).join("");
+}
+
+// ─── OVERVIEW ROSTER ───
+function renderOverviewRoster(){
+  document.getElementById("overview-roster").innerHTML = ROSTER.map(r=>`
+    <tr>
+      <td><b>${r.member}</b></td>
+      <td><span class="rank-chip">${r.tag}</span></td>
+      <td><span class="pill pill-green">Active</span></td>
+    </tr>
+  `).join("");
+}
+
+// ─── FULL ROSTER PAGE ───
+function renderRoster(){
+  document.getElementById("full-roster").innerHTML = ROSTER.map((r,i)=>`
+    <tr>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);">${String(i+1).padStart(2,"0")}</td>
+      <td><b>${r.member}</b></td>
+      <td><span class="rank-chip">${r.tag}</span></td>
+      <td style="color:var(--mid);font-size:12px;">${r.role}</td>
+      <td><span class="pill pill-green">Active</span></td>
+    </tr>
+  `).join("");
+}
+
+function copyRoster(){
+  const lines = ["ARCL Lightweight League — Active Training Roster","",""].concat(ROSTER.map(r=>`${r.member} (${r.tag}) — ${r.role}`));
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("Roster copied!")).catch(()=>alert("Copy not available in this browser."));
+}
+
+// ─── CALENDAR ───
+let calYear=2026, calMonth=2;
+
+function renderCalendar(){
+  const grid = document.getElementById("cal-grid");
+  grid.innerHTML = "";
+  document.getElementById("cal-title").textContent = new Date(calYear,calMonth,1).toLocaleDateString("en-US",{month:"long",year:"numeric"});
+
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+    const el=document.createElement("div"); el.className="dow"; el.textContent=d; grid.appendChild(el);
+  });
+
+  const first = new Date(calYear, calMonth, 1);
+  const startDow = first.getDay();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = startOfDay(new Date());
+
+  for(let i=0;i<startDow;i++){
+    grid.appendChild(makeDay(new Date(calYear,calMonth-1,prevDays-startDow+1+i),true,today));
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    grid.appendChild(makeDay(new Date(calYear,calMonth,d),false,today));
+  }
+  const cells = startDow+daysInMonth;
+  const pad = (7-(cells%7))%7;
+  for(let i=1;i<=pad;i++){
+    grid.appendChild(makeDay(new Date(calYear,calMonth+1,i),true,today));
+  }
+
+  renderUpcoming("side-upcoming", 8);
+}
+
+function makeDay(date, dim, today){
+  const el = document.createElement("div");
+  const iso = toISO(date);
+  const isPvp = iso === toISO(PVP_DATE);
+  const isKickoff = iso === toISO(KICKOFF);
+  const isTraining = !dim && date >= KICKOFF && !isKickoff && TRAIN_DAYS.includes(date.getDay());
+  el.className = "day"+(dim?" dim":"")+(isPvp?" has-pvp":"")+(isTraining?" has-training":"");
+  if(startOfDay(date).getTime()===today.getTime()&&!dim) el.classList.add("today");
+
+  let tags = "";
+  if(isKickoff && !dim) tags += `<div class="dtag kickoff">Kickoff</div>`;
+  if(isTraining) tags += `<div class="dtag training">Training</div>`;
+  if(isPvp && !dim) tags += `<div class="dtag pvp">PVP ⚔️</div>`;
+
+  el.innerHTML = `<div class="d-num">${date.getDate()}</div><div class="day-tags">${tags}</div>`;
+  return el;
+}
+
+function shiftMonth(delta){
+  const d=new Date(calYear,calMonth+delta,1);
+  calYear=d.getFullYear(); calMonth=d.getMonth();
+  renderCalendar();
+}
+function goToday(){
+  const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth();
+  renderCalendar();
+}
+
+// ─── INIT ───
+renderOverviewRoster();
+renderUpcoming("upcoming-events", 5);
+</script>
 </body>
 </html>
