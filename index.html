@@ -1,76 +1,147 @@
-import discord
-from discord.ext import commands
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regiment ARCL Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        regiment: '#1a1c23',
+                        panel: '#252830',
+                        accent: '#4ade80'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f1015; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1c23; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen p-6">
 
-# Set up intents
-intents = discord.Intents.default()
-intents.message_content = True
+    <header class="mb-8 border-b border-gray-700 pb-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold tracking-wider text-white uppercase">Regiment Discord</h1>
+            <p class="text-accent text-sm font-semibold tracking-widest mt-1">ARCL Certified Members PVP Dashboard</p>
+        </div>
+        <div class="text-right">
+            <span class="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide animate-pulse">Live</span>
+        </div>
+    </header>
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user} - Ready to deploy dashboard.')
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="bg-panel rounded-xl shadow-lg border border-gray-700 overflow-hidden">
+                <div class="p-4 border-b border-gray-700 bg-gray-800">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>⚔️</span> Latest Intel: The Regiment Vs Resurrect
+                    </h2>
+                </div>
+                <div class="aspect-video w-full bg-black">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/RfbSsP8AVLY?start=6116" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
 
-@bot.command(name='dashboard')
-async def setup_dashboard(ctx):
-    # Create the main dashboard embed
-    embed = discord.Embed(
-        title="🛡️ ARCL Certified Members Dashboard",
-        description="Welcome to the Regiment PVP Command Center. Active ARCL members only.",
-        color=discord.Color.dark_green()
-    )
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-panel rounded-xl shadow-lg p-6 border border-gray-700 border-t-4 border-t-red-500">
+                    <h3 class="text-lg text-gray-400 font-semibold mb-2 uppercase tracking-wide">Next Major Operation</h3>
+                    <p class="text-3xl font-bold text-white mb-2">March 28th</p>
+                    <p class="text-sm text-gray-400">ARCL Official PVP Match</p>
+                </div>
 
-    # 1. Video & Match Highlights
-    embed.add_field(
-        name="🏆 Featured Content: Last Match Victory",
-        value=(
-            "**The Regiment Vs Resurrect 10v10**\n"
-            "Watch the full match: [YouTube Link](https://www.youtube.com/watch?v=RfbSsP8AVLY&t=6116s)\n\n"
-            "**Key Highlights:**\n"
-            "• Flawless early-game supply logistics.\n"
-            "• Immovable defense line established at the Bowl.\n"
-            "• Warlord and Belly executing a massive disruptive flank."
-        ),
-        inline=False
-    )
+                <div class="bg-panel rounded-xl shadow-lg p-6 border border-gray-700 border-t-4 border-t-accent">
+                    <h3 class="text-lg text-gray-400 font-semibold mb-2 uppercase tracking-wide">Training Cycle</h3>
+                    <p class="text-sm text-gray-300 mb-3">Started: <span class="text-white font-bold">March 9th</span></p>
+                    <div class="flex gap-2">
+                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Tuesdays</span>
+                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Thursdays</span>
+                        <span class="bg-gray-700 text-xs px-2 py-1 rounded">Fridays</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    # 2. Schedule
-    embed.add_field(
-        name="📅 Operational Calendar",
-        value=(
-            "**Upcoming PVP Match:** March 28th\n"
-            "**Training Sessions Start:** March 9th\n"
-            "**Weekly Schedule:** Every Tuesday, Thursday, and Friday"
-        ),
-        inline=False
-    )
-
-    # 3. Roster
-    roster_text = (
-        "@[CO] WSSIWARLORDI\n"
-        "@[PL] (1st SGT) KillerKenny3773\n"
-        "@[TL] (LCPL) GetNMyBellyBaby\n"
-        "@[TL] (CPL) Jonj17\n"
-        "@[SSGT] Vhyns\n"
-        "@(Cpl) OldSchoolG\n"
-        "@(CPL) bloodywolf2177\n"
-        "@(LCPL) Seurkamp27P\n"
-        "@(LCPL) Xavier\n"
-        "@(PFC) zab\n"
-        "@(PFC) SlartiBartFast\n"
-        "@Red_Streaker7"
-    )
-    
-    embed.add_field(
-        name="📋 Active ARCL Lightweight League Roster",
-        value=roster_text,
-        inline=False
-    )
-
-    # Footer
-    embed.set_footer(text="ARCL Roster is actively monitored. Ensure you attend scheduled trainings.")
-
-    await ctx.send(embed=embed)
-
-# Replace 'YOUR_BOT_TOKEN_HERE' with your actual Discord Bot Token
-bot.run('YOUR_BOT_TOKEN_HERE')
+        <div class="bg-panel rounded-xl shadow-lg border border-gray-700 flex flex-col h-[800px]">
+            <div class="p-4 border-b border-gray-700 bg-gray-800 flex justify-between items-center">
+                <h2 class="text-xl font-bold">📋 Active League Roster</h2>
+                <span class="bg-accent text-black text-xs font-bold px-2 py-1 rounded">12 Members</span>
+            </div>
+            
+            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar">
+                <ul class="space-y-3">
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-yellow-400 mr-2">[CO]</span> 
+                        <span class="font-bold">WSSIWARLORDI</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-yellow-400 mr-2">[PL] (1st SGT)</span> 
+                        <span class="font-bold">KillerKenny3773</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-blue-400 mr-2">[TL] (LCPL)</span> 
+                        <span class="font-bold">GetNMyBellyBaby</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-blue-400 mr-2">[TL] (CPL)</span> 
+                        <span class="font-bold">Jonj17</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">[SSGT]</span> 
+                        <span class="font-bold">Vhyns</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(Cpl)</span> 
+                        <span class="font-bold">OldSchoolG</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(CPL)</span> 
+                        <span class="font-bold">bloodywolf2177</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(LCPL)</span> 
+                        <span class="font-bold">Seurkamp27P</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(LCPL)</span> 
+                        <span class="font-bold">Xavier</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(PFC)</span> 
+                        <span class="font-bold">zab</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">(PFC)</span> 
+                        <span class="font-bold">SlartiBartFast</span>
+                    </li>
+                    <li class="flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <div class="h-2 w-2 rounded-full bg-accent mr-3"></div>
+                        <span class="font-mono text-sm text-gray-400 mr-2">Specialist</span> 
+                        <span class="font-bold">Red_Streaker7</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
